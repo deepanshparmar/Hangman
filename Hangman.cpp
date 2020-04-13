@@ -29,7 +29,7 @@ void play_game() {
     string words[wordlist_length] = {"America", "Africa", "India", "Bhutan", "China", "Afghanistan", "Albanie", "Andorre", "Belgium", "Bermuda", "Canada", "Egypt", "Estonia", "France", "Finland", "Germany", "Britain", "Greenland", "Iraq", "Ireland", "Japan", "Jordan", "Kenya", "Kuwait", "Malawi", "Malaysia", "Maldives", "Mali", "Mexico", "Monaco", "Nepal", "Niger", "Norway", "Pakistan", "Peru", "Phillipness", "Poland", "Portugal", "Romania", "Spain", "Sudan", "Switzerland", "Ukraine", "Zimbabwe", "Sahara"};
 
 
-    // getting a random number 0 - 4
+    // getting a random number 0 - 45
     int random = rand() % wordlist_length;
 
     //getting a random word for game
@@ -42,15 +42,11 @@ void play_game() {
     
     // greeting user
     string name;
-    cout << endl << "Hello, and welcome to our Hangman game." << endl;
     cout << endl << "In order to continue, please enter your name : ";
     getline(cin, name);
+    
+    cout << endl << "==================== Hello " << name << ", type in 'hint' to use hints ====================" << endl;
 
-    // creating a variable to continue to the game response
-    char response;
-
-    cout << endl << "Hello " << name << ", press any key to continue to the game... or press 'q' to exit : ";
-    cin >> response;
 
     //generating word in * format
     string star_format(word.length(), '*');
@@ -61,17 +57,43 @@ void play_game() {
     string user_response;
 
 
-    // validating response
-    if(response == 'q' || response == 'Q') {
-        cout << endl << "Bye Bye! Had fun :)" << endl;
-    } else {
-        // creating a game loop
-        while(no_of_guesses != 0) {
-            cout << endl << endl << "Word : " << star_format << ", first letter : " << word[0] << endl;
-            cout << "Remaining guesses : " << no_of_guesses << endl;
-            cout << "Enter your guess : ";
-            cin >> user_response;
+    // code for hint
+    int hint_count = 2;
 
+    // creating a game loop
+    while(no_of_guesses != 0) {
+        cout << endl << endl << "Word : " << star_format << ", first letter : " << word[0] << endl;
+        cout << "Remaining guesses : " << no_of_guesses << endl;
+        cout << "Hints left : " << hint_count << endl;;
+        cout << "Enter your guess : ";
+        cin >> user_response;
+
+
+        string new_user_response = "";
+
+        // converting hint to lowercase
+        for(int i = 0; i < user_response.length(); i++) {
+            if(isupper(user_response[i])) {
+                new_user_response += tolower(user_response[i]);
+            }
+        }
+
+
+        // checking if response is hint
+        if(user_response == "hint") {
+            if(hint_count > 0) {
+                while(true) {
+                    int random_for_hint = rand() % word.length();
+                    if(star_format[random_for_hint] == '*') {
+                        star_format[random_for_hint] = word[random_for_hint];
+                        --hint_count;
+                        break;
+                    }
+                }
+            } else {
+                cout << endl << "You have already used your hint." << endl;
+            }
+        } else {
 
             // for checking if a number was added or not
             int added = 0;
@@ -93,18 +115,25 @@ void play_game() {
                 added = 0;
             }
 
-
-            // checking if no of guesses are 0 or not
-            if(no_of_guesses == 0) {
-                cout << endl << "You ran out of lives, Better luck next time!" << endl << endl;
-                cout << "Word was : " << word << endl << endl;
-            } else if(star_exist_or_not(star_format) == 0) {
-                cout << endl << "Congrats! You have guessed the word right." << endl;
-                break;
-            }
-
-
         }
+
+
+        string response_for_play_again;
+
+
+        // checking if no of guesses are 0 or not
+        if(no_of_guesses == 0) {
+            cout << endl << "You ran out of lives, Better luck next time!" << endl << endl;
+            cout << "Word was : " << word << endl << endl;
+            break;
+
+        } else if(star_exist_or_not(star_format) == 0) {
+            cout << endl << "Congrats! You have guessed the word right." << endl;
+            cout << endl << "Word was : " << word << endl;
+            break;
+        }
+
+
     }
 }
 
